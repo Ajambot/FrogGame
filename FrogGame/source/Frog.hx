@@ -2,27 +2,44 @@ package;
 
 import flixel.FlxSprite;
 import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.util.FlxTimer;
 
 class Frog extends FlxSprite {
-	public function new(x:Float, y:Float) {
+	var collideWith:FlxObject;
+	var isAttacking:Bool = false;
+
+	public function new(x:Float, y:Float, collideObject:FlxObject) {
 		super(x, y);
-		loadGraphic("assets/images/FrogWalking.png", true, 16, 16);
-		animation.add("idle", [0], 15);
-		animation.add("move", [0, 1, 2, 3, 4, 5, 6, 7], 15);
+		collideWith = collideObject;
 		setFacingFlip(LEFT, true, false);
 		setFacingFlip(RIGHT, false, false);
+		loadGraphic("assets/images/Frog.png", true, 71, 32);
+		animation.add("idle", [0, 1], 5);
+		animation.add("move", [2, 3, 4, 5, 6, 7, 8, 9], 10);
+		animation.add("jump", [10], 15);
+		animation.add("fall", [11], 15);
+		animation.add("attack", [12, 13, 14, 15, 16, 12], 15, false);
+		animation.add("wallGrab", [17], 15);
+		acceleration.y = 300;
 	}
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (velocity.x != 0) {
+		FlxG.collide(this, collideWith);
+
+		if (isTouching(DOWN) && velocity.x != 0 && !isAttacking) {
 			animation.play("move");
-		} else {
+		} else if (isTouching(DOWN) && velocity.x == 0 && !isAttacking) {
 			animation.play("idle");
+		} else if (velocity.y < 0 && !isAttacking) {
+			animation.play("jump");
+		} else if (velocity.y > 0 && !isAttacking) {
+			animation.play("fall");
 		}
+
 		velocity.x = 0;
-		velocity.y = 0;
 
 		if (FlxG.keys.anyPressed([LEFT, A])) {
 			velocity.x = -100;
@@ -30,12 +47,19 @@ class Frog extends FlxSprite {
 		} else if (FlxG.keys.anyPressed([RIGHT, D])) {
 			velocity.x = 100;
 			facing = RIGHT;
-		} // else if (FlxG.keys.anyPressed([UP, W])) {
-		//	velocity.y = -100;
-		//	facing = UP;
-		// } else if (FlxG.keys.anyPressed([DOWN, S])) {
-		//	velocity.y = 100;
-		//	facing = DOWN;
-		// }
+		}
+
+		if (FlxG.keys.anyJustPressed([SPACE]) && !isAttacking) {
+			animation.play("attack");
+			isAttacking = true;
+			new FlxTimer().start(0.5, function(tmr:FlxTimer) {
+				isAttacking = false;
+			});
+		}
+
+		if (FlxG.keys.anyJustPressed([UP, W]) && isTouching(DOWN)) {
+			velocity.y = -200;
+			facing = UP;
+		}
 	}
 }
