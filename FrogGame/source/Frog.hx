@@ -2,16 +2,17 @@ package;
 
 import flixel.FlxSprite;
 import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.util.FlxTimer;
+import flixel.group.FlxGroup.FlxTypedGroup;
 
 class Frog extends FlxSprite {
-	var collideWith:FlxObject;
+	var collideWith:FlxTypedGroup<FlxSprite>;
 	var isAttacking:Bool = false;
+	var isWallJumping:Bool = false;
 
-	public function new(x:Float, y:Float, collideObject:FlxObject) {
+	public function new(x:Float, y:Float, collideObjects:FlxTypedGroup<FlxSprite>) {
 		super(x, y);
-		collideWith = collideObject;
+		collideWith = collideObjects;
 		setFacingFlip(LEFT, true, false);
 		setFacingFlip(RIGHT, false, false);
 		loadGraphic("assets/images/Frog.png", true, 71, 32);
@@ -39,12 +40,19 @@ class Frog extends FlxSprite {
 			animation.play("fall");
 		}
 
-		velocity.x = 0;
+		if ((isTouching(LEFT) || isTouching(RIGHT)) && !isTouching(DOWN)) {
+			facing = facing == LEFT ? RIGHT : LEFT;
+			animation.play("wallGrab");
+		}
 
-		if (FlxG.keys.anyPressed([LEFT, A])) {
+		if (!isWallJumping) {
+			velocity.x = 0;
+		}
+
+		if (FlxG.keys.anyPressed([LEFT, A]) && !isWallJumping) {
 			velocity.x = -100;
 			facing = LEFT;
-		} else if (FlxG.keys.anyPressed([RIGHT, D])) {
+		} else if (FlxG.keys.anyPressed([RIGHT, D]) && !isWallJumping) {
 			velocity.x = 100;
 			facing = RIGHT;
 		}
@@ -57,9 +65,21 @@ class Frog extends FlxSprite {
 			});
 		}
 
-		if (FlxG.keys.anyJustPressed([UP, W]) && isTouching(DOWN)) {
+		if (FlxG.keys.anyJustPressed([UP, W]) && (isTouching(DOWN) || isTouching(LEFT) || isTouching(RIGHT))) {
+			if (isTouching(LEFT)) {
+				velocity.x = 200;
+				isWallJumping = true;
+				new FlxTimer().start(0.2, function(tmr:FlxTimer) {
+					isWallJumping = false;
+				});
+			} else if (isTouching(RIGHT)) {
+				velocity.x = -200;
+				isWallJumping = true;
+				new FlxTimer().start(0.1, function(tmr:FlxTimer) {
+					isWallJumping = false;
+				});
+			}
 			velocity.y = -200;
-			facing = UP;
 		}
 	}
 }
