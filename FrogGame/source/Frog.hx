@@ -16,6 +16,9 @@ class Frog extends FlxSprite {
 		setFacingFlip(LEFT, true, false);
 		setFacingFlip(RIGHT, false, false);
 		loadGraphic("assets/images/Frog.png", true, 71, 32);
+		setSize(16, 32);
+		offset.set((71 - 16) / 2, 0);
+
 		animation.add("idle", [0, 1], 5);
 		animation.add("move", [2, 3, 4, 5, 6, 7, 8, 9], 10);
 		animation.add("jump", [10], 15);
