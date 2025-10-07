@@ -42,10 +42,6 @@ class PlayState extends FlxState {
 
 		add(terrain);
 
-		player = new Frog(100, 100, terrain);
-		player.solid = true;
-		add(player);
-
 		// Add ants for testing: one red and one grey
 		var redAnt = new Ants(200, 0, "red", terrain);
 		redAnt.solid = true;
@@ -56,17 +52,17 @@ class PlayState extends FlxState {
 		ants.add(greyAnt);
 
 		add(ants);
+
+		player = new Frog(100, 100, terrain, ants);
+		player.solid = true;
+		add(player);
 	}
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
 		FlxG.overlap(player, ants, function(player:Frog, ant:Ants) {
-			if (player.isAttacking) {
-				ant.damage();
-			} else {
-				player.damage();
-			}
+			player.damage();
 		});
 	}
 }

@@ -2,7 +2,6 @@ package;
 
 import flixel.FlxSprite;
 import flixel.FlxG;
-import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.effects.FlxFlicker;
 
