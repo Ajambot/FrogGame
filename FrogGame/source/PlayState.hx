@@ -44,6 +44,15 @@ class PlayState extends FlxState {
 		player = new Frog(100, 100, terrain);
 		player.solid = true;
 		add(player);
+
+		// Add ants for testing: one red and one grey
+		var redAnt = new Ants(200, 0, "red", terrain);
+		redAnt.solid = true;
+		add(redAnt);
+
+		var greyAnt = new Ants(260, 0, "grey", terrain);
+		greyAnt.solid = true;
+		add(greyAnt);
 	}
 
 	override public function update(elapsed:Float) {
