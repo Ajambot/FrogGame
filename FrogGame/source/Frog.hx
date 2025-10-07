@@ -4,11 +4,17 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.util.FlxTimer;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.effects.FlxFlicker;
 
 class Frog extends FlxSprite {
+	public var health:Int = 10;
+
 	var collideWith:FlxTypedGroup<FlxSprite>;
-	var isAttacking:Bool = false;
+
+	public var isAttacking:Bool = false;
+
 	var isWallJumping:Bool = false;
+	var isImmune:Bool = false;
 
 	public function new(x:Float, y:Float, collideObjects:FlxTypedGroup<FlxSprite>) {
 		super(x, y);
@@ -17,7 +23,7 @@ class Frog extends FlxSprite {
 		setFacingFlip(RIGHT, false, false);
 		loadGraphic("assets/images/Frog.png", true, 71, 32);
 		setSize(16, 32);
-		offset.set((71 - 16) / 2, 0);
+		offset.set(31, 0);
 
 		animation.add("idle", [0, 1], 5);
 		animation.add("move", [2, 3, 4, 5, 6, 7, 8, 9], 10);
@@ -44,12 +50,24 @@ class Frog extends FlxSprite {
 		}
 
 		if ((isTouching(LEFT) || isTouching(RIGHT)) && !isTouching(DOWN)) {
-			facing = facing == LEFT ? RIGHT : LEFT;
+			setFacingFlip(LEFT, isTouching(LEFT), false);
 			animation.play("wallGrab");
+		} else {
+			setFacingFlip(LEFT, true, false);
 		}
 
 		if (!isWallJumping) {
 			velocity.x = 0;
+		}
+
+		if (facing == LEFT && !isAttacking) {
+			var diffPos = offset.x - 23;
+			offset.x = 23;
+			x -= diffPos;
+		} else if (facing == RIGHT) {
+			var diffPos = offset.x - 31;
+			offset.x = 31;
+			x -= diffPos;
 		}
 
 		if (FlxG.keys.anyPressed([LEFT, A]) && !isWallJumping) {
@@ -63,8 +81,15 @@ class Frog extends FlxSprite {
 		if (FlxG.keys.anyJustPressed([SPACE]) && !isAttacking) {
 			animation.play("attack");
 			isAttacking = true;
+			setSize(40, 32);
+			if (facing == LEFT) {
+				var diffPos = offset.x - 0;
+				offset.x = 0;
+				x -= diffPos;
+			}
 			new FlxTimer().start(0.5, function(tmr:FlxTimer) {
 				isAttacking = false;
+				setSize(16, 32);
 			});
 		}
 
@@ -84,5 +109,24 @@ class Frog extends FlxSprite {
 			}
 			velocity.y = -200;
 		}
+	}
+
+	public function damage() {
+		if (isImmune)
+			return;
+
+		isImmune = true;
+		health -= 1;
+		FlxFlicker.flicker(this, 1, 0.1, true, true, function(flick:FlxFlicker) {
+			isImmune = false;
+		});
+
+		if (health <= 0) {
+			kill();
+		}
+	}
+
+	override public function kill() {
+		FlxG.resetState();
 	}
 }

@@ -12,6 +12,7 @@ class PlayState extends FlxState {
 	var player:Frog;
 	var wall:FlxSprite;
 	var terrain:FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
+	var ants:FlxTypedGroup<Ants> = new FlxTypedGroup<Ants>();
 
 	override public function create() {
 		super.create();
@@ -48,14 +49,24 @@ class PlayState extends FlxState {
 		// Add ants for testing: one red and one grey
 		var redAnt = new Ants(200, 0, "red", terrain);
 		redAnt.solid = true;
-		add(redAnt);
+		ants.add(redAnt);
 
 		var greyAnt = new Ants(260, 0, "grey", terrain);
 		greyAnt.solid = true;
-		add(greyAnt);
+		ants.add(greyAnt);
+
+		add(ants);
 	}
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
+
+		FlxG.overlap(player, ants, function(player:Frog, ant:Ants) {
+			if (player.isAttacking) {
+				ant.damage();
+			} else {
+				player.damage();
+			}
+		});
 	}
 }
