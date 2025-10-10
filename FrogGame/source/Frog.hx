@@ -62,6 +62,20 @@ class Frog extends FlxSprite {
 			setFacingFlip(LEFT, true, false);
 		}
 
+		if (y > FlxG.height) {
+			x = 10;
+			y = 240;
+			damage();
+		}
+
+		if (x <= 0) {
+			x = 0;
+		}
+
+		if (x >= FlxG.width - width) {
+			x = FlxG.width - width;
+		}
+
 		if (!isWallJumping) {
 			velocity.x = 0;
 		}

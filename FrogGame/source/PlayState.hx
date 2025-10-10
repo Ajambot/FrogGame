@@ -19,6 +19,7 @@ class PlayState extends FlxState {
 	var timer:Float = 60;
 	var timerText:FlxText;
 	var frogLifeText:FlxText;
+	var bullets:FlxTypedGroup<FlxSprite>;
 
 	override public function create() {
 		super.create();
@@ -40,7 +41,7 @@ class PlayState extends FlxState {
 		enemies.add(new Ants(448, 80, "red", collidables));
 		enemies.add(new Ants(64, 80, "grey", collidables));
 
-		var bullets = new FlxTypedGroup<FlxSprite>();
+		bullets = new FlxTypedGroup<FlxSprite>();
 		add(bullets);
 		enemies.add(new Fly(128, 256, bullets, collidables));
 
@@ -76,6 +77,10 @@ class PlayState extends FlxState {
 		}
 
 		FlxG.overlap(player, enemies, function(player:Frog, ant:Ants) {
+			player.damage();
+		});
+
+		FlxG.overlap(player, bullets, function(player:Frog, bullet:FlxSprite) {
 			player.damage();
 		});
 	}
