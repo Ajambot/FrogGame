@@ -6,20 +6,18 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.effects.FlxFlicker;
 import flixel.tile.FlxTilemap;
 
-class Ants extends FlxSprite {
-	public var health:Int = 2;
+class Ants extends Enemy {
+	public var health:Int = 1;
 
 	var isImmune:Bool = false;
 
 	public var collideWith:FlxTilemap;
 	public var walkSpeed:Float = 40;
 
-	var enemyKillHandler:() -> Void;
-
-	public function new(x:Float, y:Float, color:String = "red", collideObjects:FlxTilemap, killHandler:() -> Void) {
+	public function new(x:Float, y:Float, color:String = "red", collideObjects:FlxTilemap) {
 		super(x, y);
 		collideWith = collideObjects;
-		enemyKillHandler = killHandler;
+		solid = true;
 
 		setFacingFlip(LEFT, false, false);
 		setFacingFlip(RIGHT, true, false);
@@ -31,6 +29,7 @@ class Ants extends FlxSprite {
 		} else {
 			path = "assets/images/RedAnt.png";
 			walkSpeed = 60;
+			health = 2;
 		}
 
 		loadGraphic(path, true, 32, 32);
@@ -54,12 +53,12 @@ class Ants extends FlxSprite {
 			FlxG.collide(this, collideWith);
 		}
 
-		if (isTouching(LEFT)) {
-			facing = RIGHT;
-			velocity.x = walkSpeed;
-		} else if (isTouching(RIGHT)) {
-			facing = LEFT;
-			velocity.x = -walkSpeed;
+		var offsetX = facing == LEFT ? 1 : 33;
+		var offsetY = height + 1;
+		var ahead = collideWith.getTileDataAt(x + offsetX, y + offsetY);
+		if (ahead == null || (ahead != null && !ahead.visible)) {
+			facing = facing == LEFT ? RIGHT : LEFT;
+			velocity.x *= -1;
 		}
 
 		if (isTouching(DOWN)) {
@@ -67,7 +66,7 @@ class Ants extends FlxSprite {
 		}
 	}
 
-	public function damage() {
+	override public function damage() {
 		if (isImmune)
 			return;
 
@@ -79,7 +78,6 @@ class Ants extends FlxSprite {
 
 		if (health <= 0) {
 			kill();
-			enemyKillHandler();
 		}
 	}
 }

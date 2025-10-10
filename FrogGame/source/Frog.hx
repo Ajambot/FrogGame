@@ -12,7 +12,7 @@ class Frog extends FlxSprite {
 	public var health:Int = 10;
 
 	var collideWith:FlxTilemap;
-	var enemies:FlxTypedGroup<Ants>;
+	var enemies:FlxTypedGroup<Enemy>;
 
 	public var tongueHitbox:FlxSprite;
 	public var tongueActive:Bool = false;
@@ -21,7 +21,7 @@ class Frog extends FlxSprite {
 	var isWallJumping:Bool = false;
 	var isImmune:Bool = false;
 
-	public function new(x:Float, y:Float, collideObjects:FlxTilemap, enemyObjects:FlxTypedGroup<Ants>) {
+	public function new(x:Float, y:Float, collideObjects:FlxTilemap, enemyObjects:FlxTypedGroup<Enemy>) {
 		super(x, y);
 		collideWith = collideObjects;
 		enemies = enemyObjects;
@@ -162,7 +162,7 @@ class Frog extends FlxSprite {
 		FlxG.state.add(tongueHitbox); // add to world
 
 		// Check for overlap immediately
-		FlxG.overlap(tongueHitbox, enemies, (_, enemy:Ants) -> {
+		FlxG.overlap(tongueHitbox, enemies, (_, enemy:Enemy) -> {
 			trace("Enemy hit!");
 			enemy.damage();
 		});

@@ -15,14 +15,10 @@ class PlayState extends FlxState {
 	var player:Frog;
 	var wall:FlxSprite;
 	var collidables:FlxTilemap;
-	var ants:FlxTypedGroup<Ants> = new FlxTypedGroup<Ants>();
+	var enemies:FlxTypedGroup<Enemy> = new FlxTypedGroup<Enemy>();
 	var timer:Float = 60;
 	var timerText:FlxText;
 	var frogLifeText:FlxText;
-
-	public var antsToKill = 5;
-
-	var antsToKillText:FlxText;
 
 	override public function create() {
 		super.create();
@@ -38,44 +34,23 @@ class PlayState extends FlxState {
 		timerText.color = FlxColor.fromString("#C5CCB8");
 		add(timerText);
 
-		antsToKillText = new flixel.text.FlxText(20, 15, 0, "Ants to kill: " + Std.string(antsToKill), 16);
-		add(antsToKillText);
+		enemies.add(new Ants(128, 256, "red", collidables));
+		enemies.add(new Ants(464, 256, "grey", collidables));
+		enemies.add(new Ants(560, 256, "red", collidables));
+		enemies.add(new Ants(448, 80, "red", collidables));
+		enemies.add(new Ants(64, 80, "grey", collidables));
 
-		// Add ants for testing: one red and one grey
-		var antKill = () -> {
-			antsToKill -= 1;
-			return null;
-		};
-		var redAnt = new Ants(200, 0, "red", collidables, antKill);
-		redAnt.solid = true;
-		ants.add(redAnt);
+		var bullets = new FlxTypedGroup<FlxSprite>();
+		add(bullets);
+		enemies.add(new Fly(128, 256, bullets, collidables));
 
-		var greyAnt = new Ants(260, 0, "grey", collidables, antKill);
-		greyAnt.solid = true;
-		ants.add(greyAnt);
+		add(enemies);
 
-		var redAnt = new Ants(220, 0, "red", collidables, antKill);
-		redAnt.solid = true;
-		ants.add(redAnt);
-
-		var greyAnt = new Ants(280, 0, "grey", collidables, antKill);
-		greyAnt.solid = true;
-		ants.add(greyAnt);
-		add(ants);
-
-		var redAnt = new Ants(240, 0, "red", collidables, antKill);
-		redAnt.solid = true;
-		ants.add(redAnt);
-
-		var greyAnt = new Ants(300, 0, "grey", collidables, antKill);
-		greyAnt.solid = true;
-		ants.add(greyAnt);
-
-		player = new Frog(100, 100, collidables, ants);
+		player = new Frog(10, 240, collidables, enemies);
 		player.solid = true;
 		add(player);
 
-		frogLifeText = new flixel.text.FlxText(200, 15, 0, "Player Health: " + Std.string(player.health), 16);
+		frogLifeText = new flixel.text.FlxText(20, 15, 0, "Player Health: " + Std.string(player.health), 16);
 		add(frogLifeText);
 	}
 
@@ -87,13 +62,12 @@ class PlayState extends FlxState {
 
 		frogLifeText.text = "Player health: " + Std.string(player.health);
 
-		antsToKillText.text = "Ants to kill: " + Std.string(antsToKill);
-
 		if (timer <= 0) {
 			FlxG.switchState(() -> new LoseState());
 		}
 
-		if (antsToKill <= 0) {
+		trace("Enemies: " + enemies.getFirstAlive() == null);
+		if (enemies.getFirstAlive() == null) {
 			FlxG.switchState(() -> new WinState());
 		}
 
@@ -101,7 +75,7 @@ class PlayState extends FlxState {
 			FlxG.switchState(() -> new LoseState());
 		}
 
-		FlxG.overlap(player, ants, function(player:Frog, ant:Ants) {
+		FlxG.overlap(player, enemies, function(player:Frog, ant:Ants) {
 			player.damage();
 		});
 	}
