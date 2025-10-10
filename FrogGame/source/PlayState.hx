@@ -26,45 +26,20 @@ class PlayState extends FlxState {
 
 	override public function create() {
 		super.create();
+
 		add(new FlxSprite().loadGraphic("assets/TiledProjects/bgimage.jpg"));
-		// LevelState.createLevel();
 		collidables = new FlxTilemap();
 		collidables.loadMapFromCSV(AssetPaths.map_Collidables__csv, AssetPaths.frog__png, 16, 16);
 		add(collidables);
 		add(new FlxTilemap().loadMapFromCSV(AssetPaths.map_Decoration__csv, AssetPaths.frog__png, 16, 16));
 		add(new FlxTilemap().loadMapFromCSV(AssetPaths.map_Timer__csv, AssetPaths.frog__png, 16, 16));
 
-		timerText = new flixel.text.FlxText(25, 50, 0, "Time left: " + Std.string(timer).split(".")[0], 16);
+		timerText = new flixel.text.FlxText(583, 24, 0, Std.string(timer).split(".")[0], 10,);
+		timerText.color = FlxColor.fromString("#C5CCB8");
 		add(timerText);
 
-		antsToKillText = new flixel.text.FlxText(250, 50, 0, "Ants to kill: " + Std.string(antsToKill), 16);
+		antsToKillText = new flixel.text.FlxText(20, 15, 0, "Ants to kill: " + Std.string(antsToKill), 16);
 		add(antsToKillText);
-
-		// floor = new FlxSprite(0, FlxG.height - 20);
-		// floor.makeGraphic(FlxG.width, 20, FlxColor.BROWN);
-		// floor.immovable = true;
-		// floor.solid = true;
-		// terrain.add(floor);
-
-		// wall = new FlxSprite(0, 0);
-		// wall.makeGraphic(20, FlxG.height, FlxColor.BROWN);
-		// wall.immovable = true;
-		// wall.solid = true;
-		// terrain.add(wall);
-
-		// wall = new FlxSprite(FlxG.width - 20, 0);
-		// wall.makeGraphic(20, FlxG.height, FlxColor.BROWN);
-		// wall.immovable = true;
-		// wall.solid = true;
-		// terrain.add(wall);
-
-		// wall = new FlxSprite(150, 0);
-		// wall.makeGraphic(20, FlxG.height - 100, FlxColor.BROWN);
-		// wall.immovable = true;
-		// wall.solid = true;
-		// terrain.add(wall);
-
-		// add(terrain);
 
 		// Add ants for testing: one red and one grey
 		var antKill = () -> {
@@ -100,7 +75,7 @@ class PlayState extends FlxState {
 		player.solid = true;
 		add(player);
 
-		frogLifeText = new flixel.text.FlxText(400, 50, 0, "Player Health: " + Std.string(player.health), 16);
+		frogLifeText = new flixel.text.FlxText(200, 15, 0, "Player Health: " + Std.string(player.health), 16);
 		add(frogLifeText);
 	}
 
@@ -108,7 +83,7 @@ class PlayState extends FlxState {
 		super.update(elapsed);
 
 		timer -= elapsed;
-		timerText.text = "Time left: " + Std.string(timer).split(".")[0];
+		timerText.text = Std.string(timer).split(".")[0];
 
 		frogLifeText.text = "Player health: " + Std.string(player.health);
 
