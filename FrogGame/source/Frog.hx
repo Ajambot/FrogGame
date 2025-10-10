@@ -23,12 +23,14 @@ class Frog extends FlxSprite {
 	var isImmune:Bool = false;
 	var attackSound:FlxSound;
 	var deathSound:FlxSound;
+	var jumpSound:FlxSound;
 
 	public function new(x:Float, y:Float, collideObjects:FlxTilemap, enemyObjects:FlxTypedGroup<Enemy>) {
 		super(x, y);
 
 		attackSound = FlxG.sound.load(AssetPaths.FROG_sound__ogg);
 		deathSound = FlxG.sound.load(AssetPaths.KILLING_sound__wav);
+		jumpSound = FlxG.sound.load(AssetPaths.Jump__wav);
 		collideWith = collideObjects;
 		enemies = enemyObjects;
 		setFacingFlip(LEFT, true, false);
@@ -132,6 +134,7 @@ class Frog extends FlxSprite {
 				});
 			}
 			velocity.y = -200;
+			jumpSound.play();
 		}
 	}
 
