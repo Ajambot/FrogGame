@@ -6,11 +6,12 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.effects.FlxFlicker;
+import flixel.tile.FlxTilemap;
 
 class Frog extends FlxSprite {
 	public var health:Int = 10;
 
-	var collideWith:FlxTypedGroup<FlxSprite>;
+	var collideWith:FlxTilemap;
 	var enemies:FlxTypedGroup<Ants>;
 
 	public var tongueHitbox:FlxSprite;
@@ -20,7 +21,7 @@ class Frog extends FlxSprite {
 	var isWallJumping:Bool = false;
 	var isImmune:Bool = false;
 
-	public function new(x:Float, y:Float, collideObjects:FlxTypedGroup<FlxSprite>, enemyObjects:FlxTypedGroup<Ants>) {
+	public function new(x:Float, y:Float, collideObjects:FlxTilemap, enemyObjects:FlxTypedGroup<Ants>) {
 		super(x, y);
 		collideWith = collideObjects;
 		enemies = enemyObjects;
@@ -128,9 +129,9 @@ class Frog extends FlxSprite {
 		}
 	}
 
-	override public function kill() {
-		FlxG.resetState();
-	}
+	// override public function kill() {
+	//	trace("Hello");
+	// }
 
 	public function doTongueAttack():Void {
 		if (tongueActive)

@@ -4,18 +4,22 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.effects.FlxFlicker;
+import flixel.tile.FlxTilemap;
 
 class Ants extends FlxSprite {
 	public var health:Int = 2;
 
 	var isImmune:Bool = false;
 
-	public var collideWith:FlxTypedGroup<FlxSprite>;
+	public var collideWith:FlxTilemap;
 	public var walkSpeed:Float = 40;
 
-	public function new(x:Float, y:Float, color:String = "red", collideObjects:FlxTypedGroup<FlxSprite> = null) {
+	var enemyKillHandler:() -> Void;
+
+	public function new(x:Float, y:Float, color:String = "red", collideObjects:FlxTilemap, killHandler:() -> Void) {
 		super(x, y);
 		collideWith = collideObjects;
+		enemyKillHandler = killHandler;
 
 		setFacingFlip(LEFT, false, false);
 		setFacingFlip(RIGHT, true, false);
@@ -75,6 +79,7 @@ class Ants extends FlxSprite {
 
 		if (health <= 0) {
 			kill();
+			enemyKillHandler();
 		}
 	}
 }
