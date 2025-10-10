@@ -30,14 +30,17 @@ class Fly extends FlxSprite {
         this.bullets = bullets;
         this.terrain = terrain;
 
-        loadGraphic("assets/images/fly.png", true, 32, 32);
-        animation.add("fly", [0, 1, 2, 3], 10, true);
-        animation.add("land", [4, 5, 6], 6, false);
-        animation.add("sit", [6], 0, false);
-        animation.add("takeoff", [6, 5, 4], 8, false);
-        animation.add("pop", [7, 8, 9], 12, false);
+        // Load 3-frame sprite sheet (16x16 per frame)
+        loadGraphic("assets/images/fly.png", true, 16, 16);
+        
+        // Define animations using only 3 frames [0, 1, 2]
+        animation.add("fly", [0, 1, 2], 10, true);      // All 3 frames for flying
+        animation.add("sit", [2], 0, false);             // Frame 2 for sitting
+        animation.add("pop", [0, 1, 2], 15, false);      // Quick cycle for death
 
         animation.play("fly");
+        scale.set(4, 4);
+        updateHitbox();
         velocity.y = FlxG.random.float(-50, 50);
         velocity.x = FlxG.random.float(-30, 30);
 
@@ -62,7 +65,7 @@ class Fly extends FlxSprite {
         switch (newState) {
             case FlyState.LANDING:
                 currentState = FlyState.LANDING;
-                animation.play("land");
+                animation.play("fly"); // Keep flying animation during descent
                 velocity.set(0, 100);
                 FlxTween.tween(this, { y: groundY }, 0.5, {
                     onComplete: function(_) {
@@ -82,7 +85,7 @@ class Fly extends FlxSprite {
 
             case FlyState.TAKING_OFF:
                 currentState = FlyState.TAKING_OFF;
-                animation.play("takeoff");
+                animation.play("fly"); // Use fly animation for takeoff
                 FlxTween.tween(this, { y: y - 100 }, 0.5, {
                     onComplete: function(_) {
                         changeState(FlyState.FLYING);
@@ -100,8 +103,9 @@ class Fly extends FlxSprite {
                 animation.play("pop");
                 velocity.set(0, 0);
                 
-                // Stop shooting timer
-                // if (shootTimer != null) shootTimer.kill();
+                // Stop timers
+                if (shootTimer != null) shootTimer.cancel();
+                if (landCycleTimer != null) landCycleTimer.cancel();
 
                 new FlxTimer().start(0.3, function(_) {
                     kill();
@@ -114,17 +118,18 @@ class Fly extends FlxSprite {
             changeState(FlyState.DEAD);
         }
     }
-private function shoot():Void {
-    if (currentState == FlyState.DEAD) return; // <-- STOP shooting if dead
 
-    var bullet = new FlxSprite(x + width / 2 - 2, y + height / 2);
-    bullet.makeGraphic(4, 4, FlxColor.RED);
-    bullet.velocity.y = 200;
+    private function shoot():Void {
+        if (currentState == FlyState.DEAD) return;
 
-    new FlxTimer().start(3, function(_) { bullet.kill(); });
+        var bullet = new FlxSprite(x + width / 2 - 2, y + height / 2);
+        bullet.makeGraphic(4, 4, FlxColor.RED);
+        bullet.velocity.y = 200;
 
-    bullets.add(bullet);
-}
+        new FlxTimer().start(3, function(_) { bullet.kill(); });
+
+        bullets.add(bullet);
+    }
 
     override public function update(elapsed:Float):Void {
         super.update(elapsed);
@@ -135,26 +140,16 @@ private function shoot():Void {
         if (y < 0 || y > FlxG.height - height - 40)
             velocity.y *= -1;
     }
+    
+    override public function destroy():Void {
+        if (shootTimer != null) {
+            shootTimer.destroy();
+            shootTimer = null;
+        }
+        if (landCycleTimer != null) {
+            landCycleTimer.destroy();
+            landCycleTimer = null;
+        }
+        super.destroy();
+    }
 }
-//  //  add this in playstate === FLIES ===
-        // add(bullets);
-        // var fly1 = new Fly(350, 100, bullets, terrain);
-        // var fly2 = new Fly(500, 150, bullets, terrain);
-        // flies.add(fly1);
-        // flies.add(fly2);
-        // add(flies);
-        //  // === Frog vs Ants ===
-        // FlxG.overlap(player, ants, function(p:Frog, a:Ants) {
-        //     p.damage();
-        // });
-
-        // // === Frog vs Flies (touching the fly) ===
-        // FlxG.overlap(player, flies, function(p:Frog, f:Fly) {
-        //     f.hitByFrog(); // kills if sitting
-        // });
-
-        // // === Frog vs Red Bullets === 🩸
-        // FlxG.overlap(player, bullets, function(p:Frog, b:FlxSprite) {
-        //     b.kill();       // remove bullet
-        //     p.damage();     // blink frog / lose life
-        // });
