@@ -1,5 +1,6 @@
 package;
 
+import flixel.sound.FlxSound;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.util.FlxColor;
@@ -20,9 +21,14 @@ class Frog extends FlxSprite {
 
 	var isWallJumping:Bool = false;
 	var isImmune:Bool = false;
+	var attackSound:FlxSound;
+	var deathSound:FlxSound;
 
 	public function new(x:Float, y:Float, collideObjects:FlxTilemap, enemyObjects:FlxTypedGroup<Enemy>) {
 		super(x, y);
+
+		attackSound = FlxG.sound.load(AssetPaths.FROG_sound__ogg);
+		deathSound = FlxG.sound.load(AssetPaths.KILLING_sound__wav);
 		collideWith = collideObjects;
 		enemies = enemyObjects;
 		setFacingFlip(LEFT, true, false);
@@ -102,6 +108,7 @@ class Frog extends FlxSprite {
 
 		if (FlxG.keys.anyJustPressed([SPACE]) && !isAttacking && animation.name != "wallGrab") {
 			animation.play("attack");
+			attackSound.play();
 			isAttacking = true;
 			doTongueAttack();
 

@@ -24,6 +24,9 @@ class PlayState extends FlxState {
 	override public function create() {
 		super.create();
 
+		if (FlxG.sound.music == null) {
+			FlxG.sound.playMusic(AssetPaths.BACKGROUND_music__ogg, 1, true);
+		}
 		add(new FlxSprite().loadGraphic("assets/TiledProjects/bgimage.jpg"));
 		collidables = new FlxTilemap();
 		collidables.loadMapFromCSV(AssetPaths.map_Collidables__csv, AssetPaths.frog__png, 16, 16);
@@ -57,7 +60,6 @@ class PlayState extends FlxState {
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
-
 		timer -= elapsed;
 		timerText.text = Std.string(timer).split(".")[0];
 
