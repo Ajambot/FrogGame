@@ -9,6 +9,7 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.addons.editors.tiled.TiledMap;
 import flixel.tile.FlxTilemap;
+import flixel.ui.FlxButton;
 
 class PlayState extends FlxState {
 	var floor:FlxSprite;
@@ -85,29 +86,87 @@ class PlayState extends FlxState {
 		});
 	}
 }
+class WinState extends FlxState
+{
+    override public function create():Void
+    {
+        super.create();
 
-class WinState extends FlxState {
-	override public function create() {
-		super.create();
-		var text = new flixel.text.FlxText(0, 0, 0, "You win", 64);
-		text.screenCenter();
-		add(text);
-	}
+        //  Background image 
+        var bg = new FlxSprite(0, 0, "assets/images/win_bg.png");
+        bg.setGraphicSize(FlxG.width, FlxG.height);
+        bg.updateHitbox();
+        add(bg);
 
-	override public function update(elapsed:Float) {
-		super.update(elapsed);
-	}
+        //  YOU WIN text
+        var winText = new FlxText(0, 60, FlxG.width, "🎉 YOU WIN! 🎉");
+        winText.setFormat(null, 48, 0xFFFFFF, "center");
+        add(winText);
+
+        // "Return to Menu" button
+        var menuBtn = new FlxButton(FlxG.width / 2 - 70, 240, "Return to Menu", function() {
+            FlxG.switchState(() -> new MenuState());
+        });
+        menuBtn.scale.set(1.5, 1.5); // make it larger
+        add(menuBtn);
+
+        // "Play Again" button
+        var retryBtn = new FlxButton(FlxG.width / 2 - 70, 180, "Play Again", function() {
+            FlxG.switchState(() -> new PlayState());
+        });
+        retryBtn.scale.set(1.5, 1.5); // make it larger
+        add(retryBtn);
+    }
+
+    override public function update(elapsed:Float):Void
+    {
+        super.update(elapsed);
+
+        // Shortcut: ENTER to play again
+        if (FlxG.keys.justPressed.ENTER)
+            FlxG.switchState(() -> new PlayState());
+    }
 }
 
-class LoseState extends FlxState {
-	override public function create() {
-		super.create();
-		var text = new flixel.text.FlxText(0, 0, 0, "You lose", 64);
-		text.screenCenter();
-		add(text);
-	}
 
-	override public function update(elapsed:Float) {
-		super.update(elapsed);
-	}
+class LoseState extends FlxState
+{
+    override public function create():Void
+    {
+        super.create();
+
+        //  Background image 
+        var bg = new FlxSprite(0, 0, "assets/images/lose_bg.png");
+        bg.setGraphicSize(FlxG.width, FlxG.height);
+        bg.updateHitbox();
+        add(bg);
+
+        //  YOU LOSE text
+        var loseText = new FlxText(0, 60, FlxG.width, "💀 YOU LOSE 💀");
+        loseText.setFormat(null, 48, 0xFFFFFF, "center");
+        add(loseText);
+
+        // "Try Again" button
+        var retryBtn = new FlxButton(FlxG.width / 2 - 70, 200, "Try Again", function() {
+            FlxG.switchState(() -> new PlayState());
+        });
+        retryBtn.scale.set(1.5, 1.5); // make it larger
+        add(retryBtn);
+
+        // "Return to Menu" button
+        var menuBtn = new FlxButton(FlxG.width / 2 - 70, 260, "Return to Menu", function() {
+            FlxG.switchState(() -> new MenuState());
+        });
+        menuBtn.scale.set(1.5, 1.5); // make it larger
+        add(menuBtn);
+    }
+
+    override public function update(elapsed:Float):Void
+    {
+        super.update(elapsed);
+
+        // Shortcut: ENTER to retry quickly
+        if (FlxG.keys.justPressed.ENTER)
+            FlxG.switchState(() -> new PlayState());
+    }
 }
