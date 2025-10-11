@@ -153,10 +153,6 @@ class Frog extends FlxSprite {
 		}
 	}
 
-	// override public function kill() {
-	//	trace("Hello");
-	// }
-
 	public function doTongueAttack():Void {
 		if (tongueActive)
 			return; // prevent spamming
@@ -187,7 +183,6 @@ class Frog extends FlxSprite {
 
 		// Check for overlap immediately
 		FlxG.overlap(tongueHitbox, enemies, (_, enemy:Enemy) -> {
-			trace("Enemy hit!");
 			enemy.damage();
 		});
 

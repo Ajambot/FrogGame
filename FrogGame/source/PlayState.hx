@@ -1,5 +1,6 @@
 package;
 
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
@@ -70,7 +71,6 @@ class PlayState extends FlxState {
 			FlxG.switchState(() -> new LoseState());
 		}
 
-		trace("Enemies: " + enemies.getFirstAlive() == null);
 		if (enemies.getFirstAlive() == null) {
 			FlxG.switchState(() -> new WinState());
 		}
@@ -88,87 +88,87 @@ class PlayState extends FlxState {
 		});
 	}
 }
-class WinState extends FlxState
-{
-    override public function create():Void
-    {
-        super.create();
 
-        //  Background image 
-        var bg = new FlxSprite(0, 0, "assets/images/win_bg.png");
-        bg.setGraphicSize(FlxG.width, FlxG.height);
-        bg.updateHitbox();
-        add(bg);
+class WinState extends FlxState {
+	override public function create():Void {
+		super.create();
+		FlxG.sound.music.stop();
+		FlxG.sound.music = null;
+		FlxG.sound.load(AssetPaths.GameWin__wav).play();
 
-        //  YOU WIN text
-        var winText = new FlxText(0, 60, FlxG.width, "🎉 YOU WIN! 🎉");
-        winText.setFormat(null, 48, 0xFFFFFF, "center");
-        add(winText);
+		//  Background image
+		var bg = new FlxSprite(0, 0, "assets/images/win_bg.png");
+		bg.setGraphicSize(FlxG.width, FlxG.height);
+		bg.updateHitbox();
+		add(bg);
 
-        // "Return to Menu" button
-        var menuBtn = new FlxButton(FlxG.width / 2 - 70, 240, "Return to Menu", function() {
-            FlxG.switchState(() -> new MenuState());
-        });
-        menuBtn.scale.set(1.5, 1.5); // make it larger
-        add(menuBtn);
+		//  YOU WIN text
+		var winText = new FlxText(0, 60, FlxG.width, "🎉 YOU WIN! 🎉");
+		winText.setFormat(null, 48, 0xFFFFFF, "center");
+		add(winText);
 
-        // "Play Again" button
-        var retryBtn = new FlxButton(FlxG.width / 2 - 70, 180, "Play Again", function() {
-            FlxG.switchState(() -> new PlayState());
-        });
-        retryBtn.scale.set(1.5, 1.5); // make it larger
-        add(retryBtn);
-    }
+		// "Return to Menu" button
+		var menuBtn = new FlxButton(FlxG.width / 2 - 70, 240, "Return to Menu", function() {
+			FlxG.switchState(() -> new MenuState());
+		});
+		menuBtn.scale.set(1.5, 1.5); // make it larger
+		add(menuBtn);
 
-    override public function update(elapsed:Float):Void
-    {
-        super.update(elapsed);
+		// "Play Again" button
+		var retryBtn = new FlxButton(FlxG.width / 2 - 70, 180, "Play Again", function() {
+			FlxG.switchState(() -> new PlayState());
+		});
+		retryBtn.scale.set(1.5, 1.5); // make it larger
+		add(retryBtn);
+	}
 
-        // Shortcut: ENTER to play again
-        if (FlxG.keys.justPressed.ENTER)
-            FlxG.switchState(() -> new PlayState());
-    }
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
+
+		// Shortcut: ENTER to play again
+		if (FlxG.keys.justPressed.ENTER)
+			FlxG.switchState(() -> new PlayState());
+	}
 }
 
+class LoseState extends FlxState {
+	override public function create():Void {
+		super.create();
+		FlxG.sound.music.stop();
+		FlxG.sound.music = null;
+		FlxG.sound.load(AssetPaths.GameLose__wav).play();
 
-class LoseState extends FlxState
-{
-    override public function create():Void
-    {
-        super.create();
+		//  Background image
+		var bg = new FlxSprite(0, 0, "assets/images/lose_bg.png");
+		bg.setGraphicSize(FlxG.width, FlxG.height);
+		bg.updateHitbox();
+		add(bg);
 
-        //  Background image 
-        var bg = new FlxSprite(0, 0, "assets/images/lose_bg.png");
-        bg.setGraphicSize(FlxG.width, FlxG.height);
-        bg.updateHitbox();
-        add(bg);
+		//  YOU LOSE text
+		var loseText = new FlxText(0, 60, FlxG.width, "💀 YOU LOSE 💀");
+		loseText.setFormat(null, 48, 0xFFFFFF, "center");
+		add(loseText);
 
-        //  YOU LOSE text
-        var loseText = new FlxText(0, 60, FlxG.width, "💀 YOU LOSE 💀");
-        loseText.setFormat(null, 48, 0xFFFFFF, "center");
-        add(loseText);
+		// "Try Again" button
+		var retryBtn = new FlxButton(FlxG.width / 2 - 70, 200, "Try Again", function() {
+			FlxG.switchState(() -> new PlayState());
+		});
+		retryBtn.scale.set(1.5, 1.5); // make it larger
+		add(retryBtn);
 
-        // "Try Again" button
-        var retryBtn = new FlxButton(FlxG.width / 2 - 70, 200, "Try Again", function() {
-            FlxG.switchState(() -> new PlayState());
-        });
-        retryBtn.scale.set(1.5, 1.5); // make it larger
-        add(retryBtn);
+		// "Return to Menu" button
+		var menuBtn = new FlxButton(FlxG.width / 2 - 70, 260, "Return to Menu", function() {
+			FlxG.switchState(() -> new MenuState());
+		});
+		menuBtn.scale.set(1.5, 1.5); // make it larger
+		add(menuBtn);
+	}
 
-        // "Return to Menu" button
-        var menuBtn = new FlxButton(FlxG.width / 2 - 70, 260, "Return to Menu", function() {
-            FlxG.switchState(() -> new MenuState());
-        });
-        menuBtn.scale.set(1.5, 1.5); // make it larger
-        add(menuBtn);
-    }
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
 
-    override public function update(elapsed:Float):Void
-    {
-        super.update(elapsed);
-
-        // Shortcut: ENTER to retry quickly
-        if (FlxG.keys.justPressed.ENTER)
-            FlxG.switchState(() -> new PlayState());
-    }
+		// Shortcut: ENTER to retry quickly
+		if (FlxG.keys.justPressed.ENTER)
+			FlxG.switchState(() -> new PlayState());
+	}
 }

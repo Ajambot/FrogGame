@@ -50,66 +50,9 @@ class Fly extends Enemy {
 		animation.play("fly");
 		scale.set(2, 2);
 		updateHitbox();
-		// acceleration.y = FlxG.random.float(-50, 50);
-		// acceleration.x = FlxG.random.float(-30, 30);
 
 		groundY = FlxG.height - 70;
-
-		// === LANDING CYCLE ===
-		// landCycleTimer = new FlxTimer();
-		// landCycleTimer.start(FlxG.random.int(8, 12), function(_) {
-		//	if (currentState == FlyState.FLYING)
-		//		changeState(FlyState.LANDING);
-		// }, 0); // repeat indefinitely
 	}
-
-	// private function changeState(newState:FlyState):Void {
-	//	switch (newState) {
-	//		case FlyState.LANDING:
-	//			currentState = FlyState.LANDING;
-	//			animation.play("fly"); // Keep flying animation during descent
-	//			velocity.set(0, 100);
-	//			FlxTween.tween(this, {y: groundY}, 0.5, {
-	//				onComplete: function(_) {
-	//					if (isTouching(DOWN)) {
-	//						changeState(FlyState.SITTING);
-	//					} else {
-	//						changeState(FlyState.FLYING);
-	//					}
-	//				}
-	//			});
-	//		case FlyState.SITTING:
-	//			currentState = FlyState.SITTING;
-	//			animation.play("sit");
-	//			velocity.set(0, 0);
-	//			// Stay for 2–3 seconds, then take off
-	//			new FlxTimer().start(FlxG.random.float(2, 3), function(_) {
-	//				changeState(FlyState.TAKING_OFF);
-	//			});
-	//		case FlyState.TAKING_OFF:
-	//			currentState = FlyState.TAKING_OFF;
-	//			animation.play("fly"); // Use fly animation for takeoff
-	//			FlxTween.tween(this, {y: y - 100}, 0.5, {
-	//				onComplete: function(_) {
-	//					changeState(FlyState.FLYING);
-	//				}
-	//			});
-	//		case FlyState.FLYING:
-	//			currentState = FlyState.FLYING;
-	//			animation.play("fly");
-	//			acceleration.y = FlxG.random.float(-50, 50);
-	//			acceleration.x = FlxG.random.float(-40, 40);
-	//		case FlyState.DEAD:
-	//			currentState = DEAD;
-	//			animation.play("pop");
-	//			velocity.set(0, 0);
-	//			if (landCycleTimer != null)
-	//				landCycleTimer.cancel();
-	//			new FlxTimer().start(0.3, function(_) {
-	//				kill();
-	//			});
-	//	}
-	// }
 
 	override public function damage():Void {
 		kill();
@@ -117,7 +60,6 @@ class Fly extends Enemy {
 	}
 
 	private function shoot():Void {
-		trace("shoot");
 		if (currentState == FlyState.DEAD)
 			return;
 
@@ -136,8 +78,6 @@ class Fly extends Enemy {
 		super.update(elapsed);
 
 		FlxG.collide(this, terrain);
-		trace(velX, velY);
-		trace(facing);
 		velocity.x = velX;
 		velocity.y = velY;
 		if (velX < 0) {
