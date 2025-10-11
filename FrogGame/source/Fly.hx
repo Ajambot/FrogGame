@@ -1,5 +1,6 @@
 package;
 
+import flixel.sound.FlxSound;
 import flixel.tile.FlxTilemap;
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -26,11 +27,13 @@ class Fly extends Enemy {
 	private var groundY:Float;
 	private var velX:Int;
 	private var velY:Int;
+	var deathSound:FlxSound;
 
 	public function new(x:Float, y:Float, bullets:FlxTypedGroup<FlxSprite>, terrain:FlxTilemap) {
 		super(x, y);
 		velX = FlxG.random.bool() ? -40 : 40;
 		velY = FlxG.random.int(20, 40);
+		deathSound = FlxG.sound.load(AssetPaths.KILLING_sound__wav);
 
 		this.bullets = bullets;
 		this.terrain = terrain;
@@ -110,6 +113,7 @@ class Fly extends Enemy {
 
 	override public function damage():Void {
 		kill();
+		deathSound.play();
 	}
 
 	private function shoot():Void {

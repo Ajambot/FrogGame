@@ -1,5 +1,6 @@
 package;
 
+import flixel.sound.FlxSound;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -14,10 +15,13 @@ class Ants extends Enemy {
 	public var collideWith:FlxTilemap;
 	public var walkSpeed:Float = 40;
 
+	var deathSound:FlxSound;
+
 	public function new(x:Float, y:Float, color:String = "red", collideObjects:FlxTilemap) {
 		super(x, y);
 		collideWith = collideObjects;
 		solid = true;
+		deathSound = FlxG.sound.load(AssetPaths.KILLING_sound__wav);
 
 		setFacingFlip(LEFT, false, false);
 		setFacingFlip(RIGHT, true, false);
@@ -78,6 +82,7 @@ class Ants extends Enemy {
 
 		if (health <= 0) {
 			kill();
+			deathSound.play();
 		}
 	}
 }
